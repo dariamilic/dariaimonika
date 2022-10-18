@@ -7,22 +7,35 @@
 #define MAX_FILE_NAME (256)
 
 int nuberOfStudents(char* filename);
+void inputDocFromFile(char* filename, _student,int);
+void printFile(_student,int);
+
+typedef struct{
+    char ime[120];
+    char prezime[120];
+    int bodovi;
+    float relativni_bodovi;
+
+} _student;
 
 
 int main(void)
 {
     char filename [MAX_FILE_NAME]={0};
+    int students;
+    _studnet* s;
+
+    s=(_student*)malloc(n*sizeof(_student));
+
 
     printf("insert filename:");
     scanf(" %s",filename);
 
-    int students;
-
-    students=numberOfStudnets(filename);
-    
    
-
+    students=numberOfStudnets(filename);
     printf("Number Of Students in %s file is %d",filename,students);
+    inputDocFromFile(filename, s, students);
+    printFile(s,students);
 
     return 0;
 }
@@ -50,5 +63,49 @@ int nuberOfStudents(char* filename )
     }
     fclose(fp);
     return count;
+
+}
+void inputDocFromFile(char* filename, _student s,int n)
+{
+    int i;
+    int max_bodovi;
+    FILE *fp=NULL;
+    fp=fopen(filename,"r");
+
+      if(fp==NULL)
+    {
+        printf("something is wrong with file that you used..\n\r");
+        return FILE_DIDNT_OPEN_ERROR;
+    }
+    while (!feof(fp))
+    {
+        for(i=0;i<n;i++)
+        {
+            fscanf(fp,"%s",s[i].ime);
+            fscanf(fp,"%s",s[i].prezime);
+            fscanf(fp,"%s",s[i].bodovi);
+        }
+    }
+
+    printf("how mutch is max points");
+    scanf("%d",&max_bodovi);
+
+    for(i=0;i<n;i++)
+    {
+        s[i].relativni_bodovi=s[i].bodovi/max_bodovi*100;
+    }
+
+    return ;
+}
+void printFile(_student s,int n)
+{
+    int i;
+    for(i=0;i<n;i++)
+    {
+        printf("%s %s %d %d",s[i].ime,s[i].prezime,s[i].bodovi,s[i],relativni_bodovi);
+        printf("\n");
+
+    }
+    return;
 
 }
