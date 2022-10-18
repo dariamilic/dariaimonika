@@ -1,0 +1,55 @@
+#define _CRT_SECURE_NO_WARNINGS
+
+
+#include <stdio.h>
+#include <strnig.h>
+#include <stlib.h>
+
+#define FILE_DIDNT_OPEN_ERROR (-1)
+#define MAX_LINE (1024)
+#define MAX_FILE_NAME (256)
+
+int nuberOfStudents(char* filename);
+
+
+int main(void)
+{
+    char filename [MAX_FILE_NAME]={0};
+
+    printf("insert filename:");
+    scanf(" %s",filename);
+
+    int students;
+
+    students=numberOfStudnets(filename);
+
+    printf("Number Of Students in your file is %d",students);
+
+    return 0;
+}
+int nuberOfStudents(char* filename )
+{
+    FILE* fp=NULL;
+    int count = 0;
+
+    char buffer[MAX_LINE]={0};
+
+    fp=fopen(filename,"r");
+
+    if(fp==NULL)
+    {
+        printf("something is wrong with file that you used..\n\r");
+        return FILE_DIDNT_OPEN_ERROR;
+    }
+    while (!feof(fp))
+    {
+        if(strcmp("\n", buffer)!=0)
+        {
+            count++;
+        }
+
+    }
+    fclose(fp);
+    return count;
+
+}
