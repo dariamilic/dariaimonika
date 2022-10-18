@@ -19,8 +19,10 @@ int main(void)
     int students;
 
     students=numberOfStudnets(filename);
+    
+   
 
-    printf("Number Of Students in your file is %d",students);
+    printf("Number Of Students in %s file is %d",filename,students);
 
     return 0;
 }
