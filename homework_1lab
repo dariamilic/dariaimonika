@@ -1,118 +1,97 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-
-#define FILE_DIDNT_OPEN_ERROR (-1)
-#define MAX_LINE (1024)
-#define MAX_FILE_NAME (256)
-
-int nuberOfStudents(char* filename);
-void inputDocFromFile(char* filename, _student*,int);
-void printFile(_student*,int);
+#include <string.h>
 
 typedef struct{
-    char ime[120];
-    char prezime[120];
-    int bodovi;
-    float relativni_bodovi;
+	char ime[120];
+	char prezime[120];
+	int bodovi;
+	float relativni_bodovi;
+}student;
 
-} _student;
+void UnosStudenata(int,student *,int);
+void IspisStudenata(int,student *,int);
+int BrojStudenata(FILE*);
 
-
-int main(void)
+int main()
 {
-    char filename [MAX_FILE_NAME]={0};
-    int students;
-    _studnet* s;
+	FILE *dat;
+	int ukupno=0;
+	int max;
+	student *st;
 
-   
+	dat=fopen("studenti.txt","r");
+	ukupno=BrojStudenata(dat);
+
+	st=(student*)malloc(ukupno*sizeof(student));
+
+	printf("Unesi max broj bodova:");
+	scanf("%d",&max);
+
+	UnosStudenata(ukupno,st,max);
+	IspisStudenata(ukupno, st,max);
+
+	fclose(dat);
 
 
-    printf("insert filename:");
-    scanf(" %s",filename);
-
-   
-    students=numberOfStudnets(filename);
-    s=(_student*)malloc(students*sizeof(_student));
-     
-     
-    printf("Number Of Students in %s file is %d",filename,students);
-    inputDocFromFile(filename, s, students);
-    printFile(s,students);
-
-    return 0;
+	return 0;
 }
-int nuberOfStudents(char* filename )
+
+int BrojStudenata(FILE *fp)
 {
-    FILE* fp=NULL;
-    int count = 0;
+	char c;
+	int brojac=0;
+	
+	if(fp==NULL)
+	{
+		printf("greska ri itvaranju datoteke");
+		return -1;
+	}
+	while(fgetc(fp)!='\n')
+	{
+		continue;
+	}
+	while(c=fgetc(fp)!=EOF)
+	{
+		if(c=='\n')
+		{
+			brojac++;		
 
-    char buffer[MAX_LINE]={0};
+		}
 
-    fp=fopen(filename,"r");
-
-    if(fp==NULL)
-    {
-        printf("something is wrong with file that you used..\n\r");
-        return FILE_DIDNT_OPEN_ERROR;
-    }
-    while (!feof(fp))
-    {
-        if(strcmp("\n", buffer)!=0)
-        {
-            count++;
-        }
-
-    }
-    fclose(fp);
-    return count;
-
+	}
+	fclose(fp);
+	printf("upisano je %d studenata.\n",brojac);
+	return brojac;	
 }
-void inputDocFromFile(char* filename, _student* s,int students)
+void UnosStudenata(int uk, student *stud,int max)
 {
-    int i;
-    int max_bodovi;
-    FILE *fp=NULL;
-    fp=fopen(filename,"r");
-    
-    students=numberOfStudnets(filename);
-    s=(_student*)malloc(students*sizeof(_student));
-     
+	int i =0;
+	FILE *fp;
+	fp=fopen("studenti.txt","r");
 
-      if(fp==NULL)
-    {
-        printf("something is wrong with file that you used..\n\r");
-        return FILE_DIDNT_OPEN_ERROR;
-    }
-    while (!feof(fp))
-    {
-        for(i=0;i<students;i++)
-        {
-            fscanf(fp,"%s",s[i].ime);
-            fscanf(fp,"%s",s[i].prezime);
-            fscanf(fp,"%d",s[i].bodovi);
-        }
-    }
+	while(fgetc(fp)!='\n')
+	{
+		continue;
+	}
+	for(i=0;i<uk;i++)
+	{
+		fscanf(fp," %s",stud[i].ime);
+		fscanf(fp," %s",stud[i].prezime);
+		fscanf(fp," %d",&stud[i].bodovi);
 
-    printf("how much is max points");
-    scanf("%d",&max_bodovi);
-
-    for(i=0;i<students;i++)
-    {
-        s[i].relativni_bodovi=s[i].bodovi/max_bodovi*100;
-    }
-
-    return 0;
+		stud[i].relativni_bodovi=(float)stud[i].bodovi/max*100;
+	}
+	fclose(fp);
+	return ;
 }
-void printFile(_student s,int students)
+void IspisStudenata(int uk, student *stud,int max)
 {
-    int i;
-    for(i=0;i<students;i++)
-    {
-        printf("%s %s %d %f",s[i].ime,s[i].prezime,s[i].bodovi,s[i],relativni_bodovi);
-        printf("\n");
+	int i;
+	for(i=0;i<uk;i++)
+	{
+		printf("%s\t%s\t%d\t%f\n",stud[i].ime,stud[i].prezime,stud[i].bodovi,stud[i].relativni_bodovi);
 
-    }
-    return;
-
+	}
+	return ;
 }
