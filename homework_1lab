@@ -1,14 +1,14 @@
 #include <stdio.h>
-#include <strnig.h>
-#include <stlib.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define FILE_DIDNT_OPEN_ERROR (-1)
 #define MAX_LINE (1024)
 #define MAX_FILE_NAME (256)
 
 int nuberOfStudents(char* filename);
-void inputDocFromFile(char* filename, _student,int);
-void printFile(_student,int);
+void inputDocFromFile(char* filename, _student*,int);
+void printFile(_student*,int);
 
 typedef struct{
     char ime[120];
@@ -25,7 +25,7 @@ int main(void)
     int students;
     _studnet* s;
 
-    s=(_student*)malloc(n*sizeof(_student));
+   
 
 
     printf("insert filename:");
@@ -33,6 +33,9 @@ int main(void)
 
    
     students=numberOfStudnets(filename);
+    s=(_student*)malloc(students*sizeof(_student));
+     
+     
     printf("Number Of Students in %s file is %d",filename,students);
     inputDocFromFile(filename, s, students);
     printFile(s,students);
@@ -65,12 +68,16 @@ int nuberOfStudents(char* filename )
     return count;
 
 }
-void inputDocFromFile(char* filename, _student s,int n)
+void inputDocFromFile(char* filename, _student* s,int students)
 {
     int i;
     int max_bodovi;
     FILE *fp=NULL;
     fp=fopen(filename,"r");
+    
+    students=numberOfStudnets(filename);
+    s=(_student*)malloc(students*sizeof(_student));
+     
 
       if(fp==NULL)
     {
@@ -79,30 +86,30 @@ void inputDocFromFile(char* filename, _student s,int n)
     }
     while (!feof(fp))
     {
-        for(i=0;i<n;i++)
+        for(i=0;i<students;i++)
         {
             fscanf(fp,"%s",s[i].ime);
             fscanf(fp,"%s",s[i].prezime);
-            fscanf(fp,"%s",s[i].bodovi);
+            fscanf(fp,"%d",s[i].bodovi);
         }
     }
 
-    printf("how mutch is max points");
+    printf("how much is max points");
     scanf("%d",&max_bodovi);
 
-    for(i=0;i<n;i++)
+    for(i=0;i<students;i++)
     {
         s[i].relativni_bodovi=s[i].bodovi/max_bodovi*100;
     }
 
-    return ;
+    return 0;
 }
-void printFile(_student s,int n)
+void printFile(_student s,int students)
 {
     int i;
-    for(i=0;i<n;i++)
+    for(i=0;i<students;i++)
     {
-        printf("%s %s %d %d",s[i].ime,s[i].prezime,s[i].bodovi,s[i],relativni_bodovi);
+        printf("%s %s %d %f",s[i].ime,s[i].prezime,s[i].bodovi,s[i],relativni_bodovi);
         printf("\n");
 
     }
