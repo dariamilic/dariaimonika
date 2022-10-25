@@ -172,7 +172,7 @@ int UnosK(char* ulazno_ime[MAX_NAME], char* ulazno_prezime[MAX_NAME], int ulazno
 }
 p_osoba Trazi(char *prezime_koje_se_trazi,p_osoba p)
 {
-	while (p != NULL && p->prezime != prezime_koje_se_trazi)
+	while (p != NULL && strcmp(p->prezime,prezime_koje_se_trazi))
 		p = p->sljedeca_osoba;
 
 	return p;
