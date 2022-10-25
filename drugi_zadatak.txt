@@ -183,7 +183,7 @@ p_osoba TraziPret(char* prezime_koje_se_trazi, p_osoba p)
 	prev = p;
 	p = p->sljedeca_osoba;
 
-	while (p != NULL && p->prezime != prezime_koje_se_trazi)
+	while (p != NULL && strcmp(p->prezime,prezime_koje_se_trazi))
 	{
 		prev = prev->sljedeca_osoba;
 		p = p->sljedeca_osoba;
