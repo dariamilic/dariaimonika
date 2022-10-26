@@ -1,4 +1,4 @@
- //TREBA POPRAVIT FUNKCIJE TRAZI I BRISI(POD C I D U ZDATAKU)
+ 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
