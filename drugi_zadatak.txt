@@ -23,6 +23,8 @@ p_osoba Trazi(char *,p_osoba);
 p_osoba TraziPret(char*,p_osoba); //ova funkcija nam pomaze kod brisanja elemenata
 int Brisi(char *,p_osoba);
 int Ispis(p_osoba);
+int UnosIza(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_prezime, char* ulazno_godiste);
+int UnosIspred(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_prezime, char* ulazno_godiste);
 
 
 int main()
@@ -77,6 +79,54 @@ int main()
 		printf("Zelite li unjeti jos jednu osobu na kraj liste \nn(ne)\nd(da)\n");
 		scanf(" %c", &odabir);
 	}
+	
+	
+	printf("Zelite li unijeti osobu prije neke druge osobe \nn(ne)\nd(da)\n");
+	scanf(" %c", &odabir);
+
+	for (i = 0; odabir != 'n'; i++)
+	{
+		printf("IME: ");
+		scanf(" %[^\n]", ulazno_ime);
+		printf("PREZIME: ");
+		scanf(" %[^\n]", ulazno_prezime);
+		printf("GODISTE: ");
+		scanf(" %d", &ulazno_godiste);
+
+		printf("Unesi prezime osobe ispred koje je zelite ubaciti");
+		scanf("%s", trazeno_prezime);
+
+		UnosIspred(&head, trazeno_prezime, ulazno_ime, ulazno_prezime, ulazno_godiste);
+
+		printf("Zelite li unijeti jos jednu osobu prije neke druge osobe \nn(ne)\nd(da)\n");
+		scanf(" %c", &odabir);
+	}
+	printf("Vasa unesena lista izgleda ovako:\n");
+	Ispis(head.sljedeca_osoba);
+	
+	printf("Zelite li unijeti osobu iza neke druge osobe \nn(ne)\nd(da)\n");
+	scanf(" %c", &odabir);
+
+	for (i = 0; odabir != 'n'; i++)
+	{
+		printf("IME: ");
+		scanf(" %[^\n]", ulazno_ime);
+		printf("PREZIME: ");
+		scanf(" %[^\n]", ulazno_prezime);
+		printf("GODISTE: ");
+		scanf(" %d", &ulazno_godiste);
+
+		printf("Unesi prezime osobe nakon koje je zelite ubaciti\n");
+		scanf("%s", trazeno_prezime);
+
+		UnosIza(&head, trazeno_prezime, ulazno_ime, ulazno_prezime, ulazno_godiste);
+
+		printf("Zelite li unijeti jos jednu osobu iza neke druge osobe \nn(ne)\nd(da)\n");
+		scanf(" %c", &odabir);
+	}
+	printf("Vasa unesena lista izgleda ovako:\n");
+	Ispis(head.sljedeca_osoba);
+
 
 	printf("Zelite li naci odredjenu osobu u listi?\nn(ne)\nd(da)\n");
 	scanf(" %c",&odabir);
@@ -170,6 +220,61 @@ int UnosK(char* ulazno_ime[MAX_NAME], char* ulazno_prezime[MAX_NAME], int ulazno
 
 	return EXIT_SUCCESS;
 }
+
+int UnosIspred(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_prezime, char* ulazno_godiste)
+{
+
+	p_osoba q;
+
+	p = TraziPret(trazeno_prezime, p);
+	if (p->sljedeca_osoba == NULL)
+	{
+		printf("Greska");
+		return ERROR;
+	}
+
+	else
+	{
+		q = (p_osoba)malloc(sizeof(struct osoba));
+
+		strcpy(q->ime, ulazno_ime);
+		strcpy(q->prezime, ulazno_prezime);
+		q->godiste = ulazno_godiste;
+
+		q->sljedeca_osoba = p->sljedeca_osoba;
+		p->sljedeca_osoba = q;
+		return p;
+	}
+}
+
+
+int UnosIza(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_prezime, char* ulazno_godiste)
+{
+	p_osoba q;
+
+	p = Trazi(trazeno_prezime, p);
+
+	if (p == NULL)
+
+		return ERROR;
+
+	else
+	{
+		q = (p_osoba)malloc(sizeof(struct osoba));
+		strcpy(q->ime, ulazno_ime);
+		strcpy(q->prezime, ulazno_prezime);
+		q->godiste = ulazno_godiste;
+
+		q->sljedeca_osoba = p->sljedeca_osoba;
+		p->sljedeca_osoba = q;
+
+	}
+
+
+}
+
+
+
 p_osoba Trazi(char *prezime_koje_se_trazi,p_osoba p)
 {
 	while (p != NULL && strcmp(p->prezime,prezime_koje_se_trazi))
