@@ -144,7 +144,7 @@ int main()
 		printf("U redu.\n");
 		break;
 	case'd':
-		Write(&head);
+		Write(head.sljedeca_osoba);
 		break;
 	}
 	printf("Zelite li procitati datoteku datoteku\nn(ne)\nd(da)\n");
@@ -155,7 +155,7 @@ int main()
 		printf("U redu.\n");
 		break;
 	case'd':
-		Read(&head);
+		Read(head.sljedeca_osoba);
 		break;
 	}
 	return EXIT_SUCCESS;
