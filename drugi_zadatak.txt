@@ -5,6 +5,7 @@
 #include <malloc.h>
 #define ERROR (-1)
 #define MAX_NAME (120)
+struct osoba;
 typedef struct osoba* p_osoba;
 typedef struct osoba {
 	char ime[MAX_NAME];
@@ -23,6 +24,7 @@ int UnosIspred(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_
 int Write(p_osoba p);
 int Read(p_osoba p);
 int Sort(p_osoba p);
+
 int main()
 {
 	struct osoba head;
@@ -33,7 +35,7 @@ int main()
 	char trazeno_prezime[MAX_NAME] = { 0 };
 	int ulazno_godiste = 0;
 	int i = 0;
-	char odabir = { 0 };;
+	char odabir = { 0 };
 	printf("Zelite li unjeti osobu na pocetak liste \nn(ne)\nd(da)\n");
 	scanf("%c", &odabir);
 	for (i = 0; odabir != 'n'; i++)
@@ -53,6 +55,7 @@ int main()
 	Ispis(head.sljedeca_osoba);
 	printf("\nako ste zaboravili dodati neku osobu, zelite li je dodati na kraj liste ?\nn(ne)\nd(da)\n");
 	scanf(" %c", &odabir);
+
 	for (i = 0; odabir != 'n'; i++)
 	{
 		printf("IME: ");
@@ -90,14 +93,14 @@ int main()
 	scanf(" %c", &odabir);
 	for (i = 0; odabir != 'n'; i++)
 	{
-		printf("IME: ");
+		printf("\nIME: ");
 		scanf(" %[^\n]", ulazno_ime);
 		printf("PREZIME: ");
 		scanf(" %[^\n]", ulazno_prezime);
 		printf("GODISTE: ");
 		scanf(" %d", &ulazno_godiste);
 		printf("Unesi prezime osobe nakon koje je zelite ubaciti\n");
-		scanf("%s", trazeno_prezime);
+		scanf(" %[^\n]", trazeno_prezime);
 		UnosIza(&head, trazeno_prezime, ulazno_ime, ulazno_prezime, ulazno_godiste);
 		printf("Zelite li unijeti jos jednu osobu iza neke druge osobe \nn(ne)\nd(da)\n");
 		scanf(" %c", &odabir);
@@ -113,7 +116,7 @@ int main()
 		break;
 	case 'd':
 		printf("Unesite prezime trazene osobe:\n");
-		scanf(" %s", &trazeno_prezime);
+		scanf(" %[^\n]", &trazeno_prezime);
 		nadjena_osoba = Trazi(trazeno_prezime, head.sljedeca_osoba);
 		printf("ostali podatci te osobe su:\nime: %s\nprezime: %s\nodiste: %d\n", nadjena_osoba->ime, nadjena_osoba->prezime, nadjena_osoba->godiste);
 		break;
@@ -127,13 +130,13 @@ int main()
 		break;
 	case'd':
 		printf("koga zelite izbristai?\nUnesite prezime te osobe\n");
-		scanf("%s", trazeno_prezime);
+		scanf(" %[^\n]", trazeno_prezime);
 		Brisi(trazeno_prezime, &head);
 		break;
 	}
 	printf("Vasa unesena lista izgleda ovako:\n");
 	Ispis(head.sljedeca_osoba);
-	printf("Zelite li napisati nesto u datoteci\nn(ne)\nd(da)\n");
+	printf("Zelite li unjeti vasu listu u datoteku?\nn(ne)\nd(da)\n");
 	scanf(" %c", &odabir);
 	switch (odabir)
 	{
@@ -144,7 +147,7 @@ int main()
 		Write(&head);
 		break;
 	}
-	printf("Zelite li procitati datoteku\nn(ne)\nd(da)\n");
+	printf("Zelite li procitati datoteku datoteku\nn(ne)\nd(da)\n");
 	scanf(" %c", &odabir);
 	switch (odabir)
 	{
@@ -195,7 +198,7 @@ int UnosIspred(p_osoba p, char* trazeno_prezime, char* ulazno_ime, char* ulazno_
 {
 	p_osoba q;
 	p = TraziPret(trazeno_prezime, p);
-	if (p->sljedeca_osoba == NULL)
+	if (p->sljedeca_osoba ==NULL)
 	{
 		printf("Greska");
 		return ERROR;
@@ -279,8 +282,8 @@ int Write(p_osoba p)
 {
 	FILE* fp;
 	char Dat[100] = { 0 };
-	printf("Unesite ime datoteke gdje zelite pisati");
-	scanf("%s", Dat);
+	printf("Unesite ime datoteke gdje zelite pisati:\n");
+	scanf(" %s", Dat);
 	fp = fopen(Dat, "w");
 	if (NULL == fp)
 	{
@@ -290,7 +293,7 @@ int Write(p_osoba p)
 	{
 		while (p != NULL)
 		{
-			fprintf(fp, "%s %s %d", p->ime, p->prezime, p->godiste);
+			fprintf(fp, "\n%s %s %d", p->ime, p->prezime, p->godiste);
 			p = p->sljedeca_osoba;
 		}
 	}
@@ -302,10 +305,10 @@ int Read(p_osoba p)
 	FILE* fp;
 	char Dat[100] = { 0 };
 	p_osoba temp;
-	printf("Unesite ime datoteke iz koje zelite citati");
-	scanf("%s", Dat);
+	printf("Unesite ime datoteke iz koje zelite citati:\n");
+	scanf(" %s", Dat);
 	fp = fopen(Dat, "r");
-	if (NULL == fp)
+	if (fp==NULL)
 		printf("Greska");
 	else
 	{
