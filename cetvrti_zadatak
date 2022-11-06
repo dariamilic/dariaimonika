@@ -1,0 +1,125 @@
+//fale cijele funkcije za zbrajanje i mnozenje i ostalo popravit
+
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX_NAME (100)
+
+struct polinom;
+typedef struct polinom* pozicija;
+typedef struct polinom {
+	int co;
+	int ex;
+	pozicija next;
+}polinom;
+
+int CitajDatotetku(pozicija,pozicija);
+int SortiraniUnos(int,int,pozicija);
+pozicija Stvori(int,int);
+int Ispisi(pozicija);
+
+
+int main()
+{
+	pozicija head1=NULL;
+	pozicija head2 = NULL;
+	pozicija head3 = NULL;
+	pozicija head4 = NULL;
+	head1 = (pozicija)malloc(sizeof(struct polinom));
+	head2 = (pozicija)malloc(sizeof(struct polinom));
+	head3 = (pozicija)malloc(sizeof(struct polinom));
+	head4 = (pozicija)malloc(sizeof(struct polinom));
+	char ime_dat[MAX_NAME] = {0};
+
+	head1->next = NULL;
+	head2->next = NULL;
+	head3->next = NULL;
+	head4->next = NULL;
+
+	
+
+	CitajDatotetku(head1,head2);
+
+	printf("Prvi polinom:\n");
+	Ispisi(head1->next);
+
+	printf("Drugi polinom:\n");
+	Ispisi(head2->next);
+	
+
+	return EXIT_SUCCESS;
+}
+int CitajDatotetku(pozicija pol1, pozicija pol2)
+{
+	int c=0, e=0;
+	pozicija temp = NULL;
+	FILE* fp;
+	char ime[MAX_NAME] = { 0 };
+	char k;
+
+	printf("Unesite ime datoteke iz koje zelite procitati svoja dva polinoma : \n");
+	scanf("%s", ime);
+	fp = fopen(ime, "r");
+	if (NULL == fp)
+	{
+		printf("Greska pri otvaranju datoteke.");
+		return EXIT_FAILURE;
+	}
+	else
+		printf("uspile ste");
+
+	while (!feof(fp))
+	{
+		k = fgetc(fp);
+		if (k != '\n') 
+		{
+			fscanf(fp,"%d %d",&c,&e);
+			SortiraniUnos(c,e,pol1);
+			printf("di stanes???");
+		}
+		else 
+		{
+			while (!feof(fp))
+			{
+				fscanf(fp, "%d %d", &c, &e);
+				SortiraniUnos(c, e, pol2);
+				printf("mmmmmmmmmmmmmmm");
+			}
+		}
+	}
+
+	fclose(fp);
+	return EXIT_SUCCESS;
+}
+int SortiraniUnos(int c, int e, pozicija p)
+{
+	pozicija temp;
+	temp = (pozicija)malloc(sizeof(polinom));
+	while (p->next != NULL && p->next->ex < e)
+		p = p->next;
+
+	temp = Stvori(c,e);
+	temp->next = p->next;
+	p->next = temp;
+
+	return EXIT_SUCCESS;
+}
+pozicija Stvori(int c,int e)
+{
+	pozicija p;
+	p = (pozicija)malloc(sizeof(polinom));
+
+	p->co = c;
+	p->ex = e;
+
+	return p;
+}
+int Ispisi(pozicija p)
+{
+	while (p != NULL)
+
+		printf("%d %d ",p->co,p->ex );
+	p = p->next;
+	return EXIT_SUCCESS;
+}
