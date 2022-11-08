@@ -1,28 +1,30 @@
-//fale cijele funkcije za zbrajanje i mnozenje i ostalo popravit
-
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#define MAX_NAME (100)
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 100
+#define ERROR -1
+
 
 struct polinom;
 typedef struct polinom* pozicija;
-typedef struct polinom {
-	int co;
-	int ex;
+
+typedef struct polinom
+{
+	int c;
+	int e;
 	pozicija next;
-}polinom;
+};
 
-int CitajDatotetku(pozicija,pozicija);
-int SortiraniUnos(int,int,pozicija);
-pozicija Stvori(int,int);
-int Ispisi(pozicija);
-
+int CitaDat(pozicija pol1, pozicija pol2, char* ime);
+int Ispis(pozicija pol);
+int SortUnos(pozicija pol, pozicija Clan);
+pozicija Novi(int coo, int exx);
+int Brisi(pozicija pol);
+int CitaDat(pozicija pol1, pozicija pol2, char* ime);
 
 int main()
 {
-	pozicija head1=NULL;
+	pozicija head1 = NULL;
 	pozicija head2 = NULL;
 	pozicija head3 = NULL;
 	pozicija head4 = NULL;
@@ -30,96 +32,144 @@ int main()
 	head2 = (pozicija)malloc(sizeof(struct polinom));
 	head3 = (pozicija)malloc(sizeof(struct polinom));
 	head4 = (pozicija)malloc(sizeof(struct polinom));
-	char ime_dat[MAX_NAME] = {0};
+	char ime_dat[MAX] = { 0 };
 
 	head1->next = NULL;
 	head2->next = NULL;
 	head3->next = NULL;
 	head4->next = NULL;
+	char ime[MAX] = { 0 };
+	printf("Unesite ime datoteke:");
+	scanf(" %s", ime);
 
+	CitaDat(head1,head2,ime);
 	
-
-	CitajDatotetku(head1,head2);
-
-	printf("Prvi polinom:\n");
-	Ispisi(head1->next);
-
-	printf("Drugi polinom:\n");
-	Ispisi(head2->next);
-	
-
-	return EXIT_SUCCESS;
 }
-int CitajDatotetku(pozicija pol1, pozicija pol2)
-{
-	int c=0, e=0;
-	pozicija temp = NULL;
-	FILE* fp;
-	char ime[MAX_NAME] = { 0 };
-	char k;
 
-	printf("Unesite ime datoteke iz koje zelite procitati svoja dva polinoma : \n");
-	scanf("%s", ime);
-	fp = fopen(ime, "r");
-	if (NULL == fp)
+int CitaDat(pozicija pol1,pozicija pol2,char* ime)
+{
+	FILE* fp;
+	char buffer[MAX] = { 0 };
+	fp = fopen(ime,"r");
+
+	if (fp = NULL)
 	{
-		printf("Greska pri otvaranju datoteke.");
-		return EXIT_FAILURE;
+		printf("Datoteka nije otvorena");
+		return ERROR;
 	}
 	else
-		printf("uspile ste");
-
-	while (!feof(fp))
 	{
-		k = fgetc(fp);
-		if (k != '\n') 
-		{
-			fscanf(fp,"%d %d",&c,&e);
-			SortiraniUnos(c,e,pol1);
-			printf("di stanes???");
-		}
-		else 
-		{
-			while (!feof(fp))
-			{
-				fscanf(fp, "%d %d", &c, &e);
-				SortiraniUnos(c, e, pol2);
-				printf("mmmmmmmmmmmmmmm");
-			}
-		}
+		printf("Uspjeh");
 	}
 
+	fgets(buffer,MAX,fp);
+	CitaPolinom(pol1,buffer);
+	Brisi(pol1);
+
+
+	fgets(buffer,MAX,fp);
+	CitaPolinom(pol2, buffer);
+	Brisi(pol2);
+
 	fclose(fp);
-	return EXIT_SUCCESS;
-}
-int SortiraniUnos(int c, int e, pozicija p)
-{
-	pozicija temp;
-	temp = (pozicija)malloc(sizeof(polinom));
-	while (p->next != NULL && p->next->ex < e)
-		p = p->next;
-
-	temp = Stvori(c,e);
-	temp->next = p->next;
-	p->next = temp;
 
 	return EXIT_SUCCESS;
 }
-pozicija Stvori(int c,int e)
+
+int CitaPolinom(pozicija pol,char* buffer)
 {
-	pozicija p;
-	p = (pozicija)malloc(sizeof(polinom));
+	int co;
+	int ex;
+	int n;
+	int r;
 
-	p->co = c;
-	p->ex = e;
+	while (strlen(buffer) > 0)
+	{
+		r = sscanf(buffer,"%d %d %n",&co,&ex,&n);
 
-	return p;
-}
-int Ispisi(pozicija p)
-{
-	while (p != NULL)
+		if (co != 0 && r == 2)
+			SortUnos(pol,Novi(co,ex));
 
-		printf("%d %d ",p->co,p->ex );
-	p = p->next;
+		buffer += n;
+
+	}
 	return EXIT_SUCCESS;
 }
+
+int Brisi(pozicija head)
+{
+	pozicija p = head;
+	pozicija temp=NULL;
+	
+	while (p->next != NULL)
+	{
+		if (temp->c == 0)
+		{
+			temp = p->next;
+			p->next = temp->next;
+			free(temp);
+		}
+		else
+			p = p->next;
+	}
+	return EXIT_SUCCESS;
+}
+
+pozicija Novi(int coo,int exx)
+{
+	pozicija Clan;
+	Clan = (pozicija)malloc(sizeof(struct polinom));
+
+	Clan->c = coo;
+	Clan->e = exx;
+	Clan->next = NULL;
+
+	return Clan;
+
+}
+
+int SortUnos(pozicija head, pozicija Clan)
+{
+	pozicija p = head;
+	pozicija temp= Clan;
+	int n = 0;
+
+	while (p->next != NULL && p->next->e > temp->e)
+		p= p->next;
+
+	if (p->next != NULL && p->next->e == temp->e)
+	{
+		p->next->c += temp->c;
+		n = p->c;
+
+		if (n == 0)
+			Brisi(p);
+	}
+
+	else
+	{
+		Novi(temp->c,temp->e);
+		UnosPoslije(p,temp);
+		
+	}
+		return EXIT_SUCCESS;
+}
+
+int Ispis(pozicija pol)
+{
+	pozicija temp = pol->next;
+
+	while (temp)
+	{
+		printf("%dx*^%d\n", temp->c, temp->e);
+		temp = temp->next;
+	}
+
+	return EXIT_SUCCESS;
+}
+int UnosPoslije(pozicija p, pozicija Clan)
+{
+	Clan->next = p->next;
+	p->next = Clan;
+}
+
