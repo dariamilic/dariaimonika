@@ -17,10 +17,10 @@ typedef struct polinom
 
 int CitaDat(pozicija pol1, pozicija pol2, char* ime);
 int Ispis(pozicija pol);
-int SortUnos(pozicija pol, pozicija Clan);
+int SortUnos(pozicija head, pozicija Clan);
 pozicija Novi(int coo, int exx);
 int Brisi(pozicija pol);
-int CitaDat(pozicija pol1, pozicija pol2, char* ime);
+int UnosPoslije(pozicija p, pozicija Clan);
 
 int main()
 {
