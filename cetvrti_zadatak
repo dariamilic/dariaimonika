@@ -27,10 +27,10 @@ int Oslobodi_mem(pozicija head);
 
 int main()
 {
-	pozicija head1=NULL;
-	pozicija head2=NULL;
-	pozicija head3=NULL;
-	pozicija head4=NULL;
+	pozicija head1 = NULL;
+	pozicija head2 = NULL;
+	pozicija head3 = NULL;
+	pozicija head4 = NULL;
 
 	head1 = (pozicija)malloc(sizeof(struct Polinom));
 	head2 = (pozicija)malloc(sizeof(struct Polinom));
@@ -43,7 +43,7 @@ int main()
 	head3->next = NULL;
 	head4->next = NULL;
 
-	int odabir=1;
+	int odabir = 1;
 
 	char ime[100] = { 0 };
 	printf("Ime datoteke\n");
@@ -54,10 +54,13 @@ int main()
 		printf("Sto zelite?\n");
 		printf("Zbrojiti polinome - 1\n");
 		printf("Pomnoziti polinome - 2\n");
+		printf("Zavrsi -0\n\n");
 		scanf(" %d", &odabir);
 
 		switch (odabir)
 		{
+		case 0:
+			break;
 
 		case 1:
 
@@ -100,273 +103,263 @@ int main()
 			Oslobodi_mem(head1);
 			Oslobodi_mem(head2);
 			Oslobodi_mem(head4);
-
-
 			break;
 		default:
 			printf("Greska!!!\n");
 			break;
 		}
-		return EXIT_SUCCESS;
 	}
+	return EXIT_SUCCESS;
 }
-	int CitaDat(pozicija head1, pozicija head2, char* ime)
-	{
-		FILE* fp = NULL;
-		char buffer[MAX] = { 0 };
+int CitaDat(pozicija head1, pozicija head2, char* ime)
+{
+	FILE* fp = NULL;
+	char buffer[MAX] = { 0 };
 
-		fp = fopen(ime, "r");
-		if (!fp)
+	fp = fopen(ime, "r");
+	if (!fp)
+	{
+		printf("Datoteka se ne moze otvoriti!\n");
+		return ERROR;
+	}
+
+	fgets(buffer, MAX, fp);
+	CitaPolinom(head1, buffer);
+	Brisi(head1);
+
+	fgets(buffer, MAX, fp);
+	CitaPolinom(head2, buffer);
+	Brisi(head2);
+
+	printf("\nProcitali ste");
+
+	fclose(fp);
+
+
+	return EXIT_SUCCESS;
+}
+int CitaPolinom(pozicija head, char* buffer)
+{
+	int k;
+	int p;
+	int br = 0;
+	int r = 0;
+
+	while (strlen(buffer) > 0)
+	{
+		r = sscanf(buffer, " %d %d %n", &k, &p, &br);
+
+
+		if (r == 2 && k != 0)
+			SortUnos(head, StvoriPolinom(k, p));
+
+		buffer += br;
+	}
+
+	return EXIT_SUCCESS;
+}
+int Brisi(pozicija head)
+{
+	pozicija temp1 = head;
+	pozicija temp2 = NULL;
+
+	while (temp1->next != NULL)
+	{
+		if (temp1->next->koef == 0)
 		{
-			perror("Datoteka se ne moze otvoriti!\n");
-			return ERROR;
+			temp2 = temp1->next;
+			temp1->next = temp2->next;
+			free(temp2);
 		}
-
-		fgets(buffer, MAX, fp);
-		CitaPolinom(head1, buffer);
-		Brisi(head1);
-
-		fgets(buffer, MAX, fp);
-		CitaPolinom(head2, buffer);
-		Brisi(head2);
-
-		printf("\nProcitali ste");
-
-		fclose(fp);
-		
-
-		return EXIT_SUCCESS;
-	}
-	int CitaPolinom(pozicija head, char* buffer)
-	{
-		int k;
-		int p;
-		int br= 0;
-		int r = 0;
-
-		while (strlen(buffer) > 0)
-		{
-			r = sscanf(buffer, " %d %d %n", &k, &p, &br);
-
-
-			if (r == 2 && k != 0)
-				SortUnos(head,StvoriPolinom(k, p));
-
-			buffer += br;
-		}
-
-		return EXIT_SUCCESS;
-	}
-	int Brisi(pozicija head)
-	{
-		pozicija temp1 = head;
-		pozicija temp2 = NULL;
-
-		while (temp1->next != NULL)
-		{
-			if (temp1->next->koef == 0)
-			{
-				temp2 = temp1->next;
-				temp1->next = temp2->next;
-				free(temp2);
-			}
-			else
-				temp1 = temp1->next;
-		}
-
-		return EXIT_SUCCESS;
-	}
-
-	pozicija StvoriPolinom(int k, int p)
-	{
-		pozicija noviClan=NULL;
-
-		noviClan = (pozicija)malloc(sizeof(struct Polinom));
-
-		noviClan->koef = k;
-		noviClan->pot = p;
-		noviClan->next = NULL;
-
-		return noviClan;
-	}
-
-	int SortUnos(pozicija head, pozicija noviClan)
-	{
-		pozicija temp1 = head;
-		pozicija temp2 = noviClan;
-		int n = 0;
-
-		while (temp1->next != NULL && temp1->next->pot > temp2->pot)
+		else
 			temp1 = temp1->next;
+	}
 
-		if (temp1->next != NULL && temp1->next->pot == temp2->pot)
+	return EXIT_SUCCESS;
+}
+
+pozicija StvoriPolinom(int k, int p)
+{
+	pozicija noviClan = NULL;
+
+	noviClan = (pozicija)malloc(sizeof(struct Polinom));
+
+	noviClan->koef = k;
+	noviClan->pot = p;
+	noviClan->next = NULL;
+
+	return noviClan;
+}
+
+int SortUnos(pozicija head, pozicija noviClan)
+{
+	pozicija temp1 = head;
+	pozicija temp2 = noviClan;
+	int n = 0;
+
+	while (temp1->next != NULL && temp1->next->pot > temp2->pot)
+		temp1 = temp1->next;
+
+	if (temp1->next != NULL && temp1->next->pot == temp2->pot)
+	{
+		temp1->next->koef += temp2->koef;
+		n = temp1->koef;
+
+		if (n == 0)
+			Brisi(temp1);
+	}
+
+	else
+	{
+		StvoriPolinom(temp2->koef, temp2->pot);
+		Unos(temp1, temp2);
+	}
+
+
+	return EXIT_SUCCESS;
+}
+
+int Unos(pozicija p, pozicija noviClan)
+{
+	noviClan->next = p->next;
+	p->next = noviClan;
+
+	return EXIT_SUCCESS;
+}
+
+int Zbrajanje(pozicija head1, pozicija head2, pozicija head3)
+{
+	pozicija P1 = head1->next;
+	pozicija P2 = head2->next;
+	pozicija P3 = head3;
+
+	pozicija noviClan = NULL;
+
+	pozicija temp = NULL;
+
+	while (P1 != NULL && P2 != NULL)
+	{
+		if (P1->pot > P2->pot)
 		{
-			temp1->next->koef += temp2->koef;
-			n = temp1->koef;
 
-			if (n == 0)
-				Brisi(temp1);
+			noviClan = StvoriPolinom(P1->koef, P1->pot);
+			if (!noviClan)
+			{
+				return EXIT_FAILURE;
+			}
+			SortUnos(P3, noviClan);
+			P1 = P1->next;
+		}
+
+		else if (P1->pot == P2->pot)
+		{
+			noviClan = StvoriPolinom(P1->koef + P2->koef, P1->pot);
+			if (!noviClan)
+			{
+				return EXIT_FAILURE;
+			}
+			SortUnos(P3, noviClan);
+			P1 = P1->next;
+			P2 = P2->next;
 		}
 
 		else
 		{
-			StvoriPolinom(temp2->koef, temp2->pot);
-			Unos(temp1, temp2);
+			noviClan = StvoriPolinom(P2->koef, P2->pot);
+			if (!noviClan)
+			{
+				return EXIT_FAILURE;
+			}
+			SortUnos(P3, noviClan);
+			P2 = P2->next;
 		}
 
-
-		return EXIT_SUCCESS;
 	}
+	if (P1 != NULL)
+		temp = P1;
+	else
+		temp = P2;
 
-	int Unos(pozicija p, pozicija noviClan)
+	while (temp != NULL)
 	{
-		noviClan->next = p->next;
-		p->next = noviClan;
-
-		return EXIT_SUCCESS;
-	}
-
-	int Zbrajanje(pozicija head1, pozicija head2, pozicija head3)
-	{
-		pozicija P1 = head1->next;
-		pozicija P2 = head2->next;
-		pozicija P3 = head3;
-
-		pozicija noviClan = NULL;
-
-		pozicija temp = NULL;
-
-		while (P1 != NULL && P2 != NULL)
+		noviClan = StvoriPolinom(temp->koef, temp->pot);
+		if (!noviClan)
 		{
-			if (P1->pot > P2->pot)
-			{
-
-				noviClan = StvoriPolinom(P1->koef, P1->pot);
-				if (!noviClan)
-				{
-					return EXIT_FAILURE;
-				}
-				SortUnos(P3, noviClan);
-				P1 = P1->next;
-			}
-
-			else if (P1->pot == P2->pot)
-			{
-				noviClan = StvoriPolinom(P1->koef + P2->koef, P1->pot);
-				if (!noviClan)
-				{
-					return EXIT_FAILURE;
-				}
-				SortUnos(P3, noviClan);
-				P1 = P1->next;
-				P2 = P2->next;
-			}
-
-			else // (P1->pot < P2->pot)
-			{
-				noviClan = StvoriPolinom(P2->koef, P2->pot);
-				if (!noviClan)
-				{
-					return EXIT_FAILURE;
-				}
-				SortUnos(P3, noviClan);
-				P2 = P2->next;
-			}
-
-
-			if (P1 != NULL)
-				temp = P1;
-			else
-				temp = P2;
-
-			while (temp != NULL)
-			{
-				noviClan = StvoriPolinom(temp->koef, temp->pot);
-				if (!noviClan)
-				{
-					return EXIT_FAILURE;
-				}
-				SortUnos(P3, noviClan);
-				temp = temp->next;
-			}
-
-			Brisi(P3);
-
-			
-		}
-		return EXIT_SUCCESS;
-	}
-	int Ispis(pozicija p)
-	{
-
-		pozicija temp = p->next;
-
-		while (temp)
-		{
-			printf("%dx*^%d\n", temp->koef, temp->pot);
-			temp = temp->next;
-		}
-
-		return EXIT_SUCCESS;
-	}
-
-
-
-		int Mnozenje(pozicija head1, pozicija head2, pozicija head4)
-		{
-			pozicija P1 = head1->next;
-			pozicija P2 = head2->next;
-			pozicija P4 = head4;
-
-			pozicija Pocetak = P2;
-
-			pozicija noviClan = NULL;
-
-			while (P1 != NULL)
-			{
-				P2 = Pocetak;
-				while (P2 != NULL)
-				{
-					noviClan = StvoriPolinom(P1->koef * P2->koef, P1->pot + P2->pot);
-					if (!noviClan)
-					{
-						return EXIT_FAILURE;
-					}
-
-					SortUnos(P4, noviClan);
-					P2 = P2->next;
-				}
-				P1 = P1->next;
-			}
-
-			Brisi(P4);
-
-
-			return EXIT_SUCCESS;
-		}
-
-
-		
-		
-
-
-	int Oslobodi_mem(pozicija head)
-	{
-		pozicija P = head;
-		pozicija temp = NULL;
-
-		if (NULL != P->next) 
-		{
-			while (NULL != P->next)
-			{
-				temp = P->next;
-				P->next = temp->next;
-				free(temp);
-			}
-			return EXIT_SUCCESS;
-		}
-
-		else
 			return EXIT_FAILURE;
+		}
+		SortUnos(P3, noviClan);
+		temp = temp->next;
 	}
+
+	Brisi(P3);
+
+	return EXIT_SUCCESS;
+}
+
+int Ispis(pozicija p)
+{
+
+	pozicija temp = p->next;
+
+	while (temp)
+	{
+		printf("%dx*^%d\n", temp->koef, temp->pot);
+		temp = temp->next;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+
+
+int Mnozenje(pozicija head1, pozicija head2, pozicija head4)
+{
+	pozicija P1 = head1->next;
+	pozicija P2 = head2->next;
+	pozicija P4 = head4;
+
+	pozicija Pocetak = P2;
+
+	pozicija noviClan = NULL;
+
+	while (P1 != NULL)
+	{
+		P2 = Pocetak;
+		while (P2 != NULL)
+		{
+			noviClan = StvoriPolinom(P1->koef * P2->koef, P1->pot + P2->pot);
+			if (!noviClan)
+			{
+				return EXIT_FAILURE;
+			}
+
+			SortUnos(P4, noviClan);
+			P2 = P2->next;
+		}
+		P1 = P1->next;
+	}
+
+	Brisi(P4);
+	return EXIT_SUCCESS;
+}
+
+
+int Oslobodi_mem(pozicija head)
+{
+	pozicija P = head;
+	pozicija temp = NULL;
+
+	if (NULL != P->next)
+	{
+		while (NULL != P->next)
+		{
+			temp = P->next;
+			P->next = temp->next;
+			free(temp);
+		}
+		return EXIT_SUCCESS;
+	}
+	else
+		return EXIT_FAILURE;
+}
 
