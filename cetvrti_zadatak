@@ -14,16 +14,16 @@ typedef struct Polinom {
 	pozicija next;
 }Polinom;
 
-int CitaDat(pozicija head1, pozicija head2, char* ime);
-int CitaPolinom(pozicija head, char* buffer);
-int Brisi(pozicija head);
-pozicija StvoriPolinom(int k, int p);
-int SortUnos(pozicija head, pozicija noviClan);
-int Unos(pozicija p, pozicija noviClan);
-int Zbrajanje(pozicija head1, pozicija head2, pozicija head3);
-int Mnozenje(pozicija head1, pozicija head2, pozicija head4);
-int Ispis(pozicija p);
-int Oslobodi_mem(pozicija head);
+int CitaDat(pozicija, pozicija, char*);
+int CitaPolinom(pozicija, char*);
+int Brisi(pozicija);
+pozicija StvoriPolinom(int , int);
+int SortUnos(pozicija, pozicija);
+int Unos(pozicija, pozicija);
+int Zbrajanje(pozicija, pozicija, pozicija);
+int Mnozenje(pozicija, pozicija, pozicija);
+int Ispis(pozicija);
+int Oslobodi_mem(pozicija);
 
 int main()
 {
