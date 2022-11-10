@@ -131,7 +131,7 @@ int CitaDat(pozicija head1, pozicija head2, char* ime)
 	CitaPolinom(head2, buffer);
 	Brisi(head2);
 
-	printf("\nProcitali ste");
+	printf("\nUspjesno ste procitali polinome koji se nalazile u unesenoj datoteci!\n");
 
 	fclose(fp);
 
@@ -211,7 +211,6 @@ int SortUnos(pozicija head, pozicija noviClan)
 
 	else
 	{
-		StvoriPolinom(temp2->koef, temp2->pot);
 		Unos(temp1, temp2);
 	}
 
