@@ -203,7 +203,7 @@ int SortUnos(pozicija head, pozicija noviClan)
 	if (temp1->next != NULL && temp1->next->pot == temp2->pot)
 	{
 		temp1->next->koef += temp2->koef;
-		n = temp1->koef;
+		n = temp1->next->koef;
 
 		if (n == 0)
 			Brisi(temp1);
@@ -348,9 +348,9 @@ int Oslobodi_mem(pozicija head)
 	pozicija P = head;
 	pozicija temp = NULL;
 
-	if (NULL != P->next)
+	if (P->next!=NULL)
 	{
-		while (NULL != P->next)
+		while (P->next!=NULL)
 		{
 			temp = P->next;
 			P->next = temp->next;
