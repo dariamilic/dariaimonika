@@ -203,7 +203,7 @@ int SortUnos(pozicija head, pozicija noviClan)
 	if (temp1->next != NULL && temp1->next->pot == temp2->pot)
 	{
 		temp1->next->koef += temp2->koef;
-		n = temp1->next->koef;
+		n = temp1->koef;
 
 		if (n == 0)
 			Brisi(temp1);
