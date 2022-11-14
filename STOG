@@ -1,0 +1,164 @@
+//bitno da je u datoteci unesen prefix sa razmacima!! 5 4 * 3 ....
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX (120)
+
+struct stog;
+typedef struct stog* p_stog;
+typedef struct stog {
+	int el;
+	p_stog sljedeci;
+
+}stog;
+
+int citaj(char *,char*);
+int push(p_stog,int);
+int pop(p_stog);
+int postfix(p_stog,char*,int);
+int oslobodi_memoriju(p_stog);
+
+int main()
+{
+	p_stog head = NULL;
+	head = (p_stog)malloc(sizeof(stog));
+	if (!head)
+	{
+		printf("Nema dovoljno memorije!\n");
+		return EXIT_FAILURE;
+	}
+	head->sljedeci = NULL;
+
+	int velicina_izraza=0;
+	char ime_dat[MAX];
+	char* buffer = NULL;
+	buffer = (char*)malloc(sizeof(char));
+
+	printf("BOK!\nUnesite ime datoteke iz koje zelite procitati postfix izraz\n");
+	scanf("%s",ime_dat);
+
+	citaj(ime_dat,buffer);
+	velicina_izraza = strlen(buffer);
+
+	postfix(head,buffer,velicina_izraza);
+	oslobodi_memoriju(head);
+	return EXIT_SUCCESS;
+}
+int citaj(char* ime_dat, char* buffer)
+{
+	FILE* fp;
+	int i = 0, n = 0;
+	fp = fopen(ime_dat,"r");
+	if (!fp)
+	{
+		printf("Greska pri otvaranju datoteke\n");
+		return EXIT_FAILURE;
+	}
+	fgets(buffer,MAX,fp);
+	fclose(fp);
+	return EXIT_SUCCESS;
+}
+int postfix(p_stog head, char* buffer, int n)
+{
+	int broj = 0, rezultat = 0, s_brojac = 0;
+	int el1 = 0, el2 = 0;
+	int vraca_za_broj = 0, vraca_za_operaciju = 0;
+	char operacija = 0;
+
+	while (rezultat <= n)
+	{
+		vraca_za_broj = 0;
+		vraca_za_operaciju = 0;
+		vraca_za_broj = sscanf(buffer,"%d %n",&broj,&s_brojac);
+
+		if (vraca_za_broj == 1)
+		{
+			printf(" %d",broj);
+			push(head,broj);
+		}
+		else
+		{
+			vraca_za_operaciju = sscanf(buffer,"%c %n",&operacija,&s_brojac);
+			if (vraca_za_operaciju == 1)
+			{
+				printf(" %c",operacija);
+				el1 = pop(head);
+				el2 = pop(head);
+
+				switch (operacija)
+				{
+				case'+':
+					push(head,el2+el1);//bitno je da 2.el bude 1.
+					break;
+				case '-':
+					push(head, el2 - el1);
+					break;
+				case'*':
+					push(head, el2 * el1);
+					break;
+				case'/':
+					push(head, el2 / el1);
+					break;
+				default:
+					printf("Ooops nemamo takvu operaciju\n");
+					break;
+
+				}
+			}
+		}
+		buffer += s_brojac;//za formatirano citanje
+		rezultat += s_brojac;//za prolazak kroz string(duzina stringa)
+	}
+
+	printf("=%d\n",pop(head));
+
+	return EXIT_SUCCESS;
+}
+int push(p_stog p, int n)
+{
+	p_stog q = NULL;
+
+	while (p->sljedeci != NULL)
+		p = p->sljedeci;
+	q = (p_stog)malloc(sizeof(stog));
+
+	if (!q)
+		{
+			printf("Nema dovoljno memorije!\n");
+			return EXIT_FAILURE;
+		}
+	q->el = n;
+	q->sljedeci = p->sljedeci;
+	p->sljedeci = q;
+
+	return EXIT_SUCCESS;
+}
+int pop(p_stog p)
+{
+	p_stog pocetak=NULL;
+	int broj=0;
+	pocetak = p;
+
+	while (pocetak->sljedeci != NULL)
+	{
+		p = pocetak;
+		pocetak = pocetak->sljedeci;
+	}
+	broj = pocetak->el;
+	p->sljedeci = pocetak = pocetak->sljedeci;
+	free(pocetak);
+
+	return broj;
+}
+int oslobodi_memoriju(p_stog p)
+{
+	p_stog temp;
+	while (p->sljedeci != NULL)
+	{
+		temp = p->sljedeci;
+		p->sljedeci = temp->sljedeci;
+		free(temp);
+	}
+	return EXIT_SUCCESS;
+}
