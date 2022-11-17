@@ -48,7 +48,6 @@ int main()
 int citaj(char* ime_dat, char* buffer)
 {
 	FILE* fp;
-	int i = 0, n = 0;
 	fp = fopen(ime_dat,"r");
 	if (!fp)
 	{
@@ -146,7 +145,7 @@ int pop(p_stog p)
 		pocetak = pocetak->sljedeci;
 	}
 	broj = pocetak->el;
-	p->sljedeci = pocetak = pocetak->sljedeci;
+	p->sljedeci = pocetak->sljedeci;
 	free(pocetak);
 
 	return broj;
