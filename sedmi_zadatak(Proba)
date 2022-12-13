@@ -1,0 +1,293 @@
+
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+#define MAX 50
+
+typedef struct dir* dPos;
+typedef struct stack* sPos;
+
+typedef struct dir {//stablo
+	char* name;
+	dPos sibling;
+	dPos child;
+}Dir;
+
+typedef struct stack {//lista dvostruko vezana
+	dPos directory;
+
+	sPos next;
+	sPos prev;
+}Stack;
+
+int MakeDir(dPos);
+int Menu(dPos, sPos);
+int Directory(dPos);
+dPos ChangeDir(dPos, sPos);
+dPos Back(dPos, sPos);
+dPos FindByName(char*, dPos);
+int PushStack(sPos, dPos);
+dPos PopStack(sPos);
+int Line(sPos, dPos, dPos);
+sPos FindLast(sPos);
+//void Delete(dPos curr);
+
+int main()
+{
+	dPos root;
+	root = (dPos)malloc(sizeof(Dir));
+	root->child = NULL;
+	root->sibling = NULL;
+	sPos head;
+	head = (sPos*)malloc(sizeof(Stack));
+	head->next = NULL;
+	head->prev = NULL;
+	root->name = (char*)malloc(MAX * sizeof(char));
+	root->name = "C:";
+
+	int status = 1;
+
+	while (status) {
+		status = Menu(root, head);
+	}
+
+	return 0;
+}
+
+int Line(sPos head, dPos root, dPos curr)
+{
+	sPos s;
+
+	s = FindLast(head);
+
+	if (head->next == NULL) {
+		printf("%s>", root->name);
+		return EXIT_SUCCESS;
+	}
+
+	while (s->prev != NULL) {
+		printf("%s>", s->directory->name);
+		s = s->prev;
+	}
+
+	printf("%s>", curr->name);
+
+	return EXIT_SUCCESS;
+}
+
+sPos FindLast(sPos head)
+{
+	sPos s;
+	s = head->next;
+
+	if (s == NULL) {
+		return NULL;
+	}
+
+	while (s->next != NULL) {
+		s = s->next;
+	}
+
+	return s;
+}
+
+int Menu(dPos root, sPos head) {
+	dPos curr = root;
+	char command[MAX] = { 0 };
+
+
+	printf("md <filename> - Add new directory\n");
+	printf("cd <filename> - Open directory\n");
+	printf("cd.. - Return to the previous directory\n");
+	printf("dir - Print directories in the current directory\n");
+	printf("exit - Exit the program\n\n");
+
+	while (1) {
+
+		Line(head, root, curr);
+		scanf("%s", command);
+
+		if (!strcmp(command, "md")) {
+			MakeDir(curr);
+		}
+
+		else if (!strcmp(command, "cd")) {
+			curr = ChangeDir(curr, head);
+		}
+
+		else if (!strcmp(command, "cd..")) {
+			curr = Back(curr, head);
+		}
+
+		else if (!strcmp(command, "dir")) {
+			Directory(curr);
+		}
+
+		else if (!strcmp(command, "exit")) {
+			//Delete(curr);
+			return 0;
+		}
+
+		else
+			printf("Command not found\n");
+	}
+
+	return EXIT_SUCCESS;
+}
+
+/*void Delete(dPos curr)
+{
+	if (curr == NULL)
+		return 0;
+	Delete(curr->sibling);
+	Delete(curr->child);
+	free(curr);
+
+}*/
+
+int MakeDir(dPos curr) {
+	dPos directory;
+	directory = (dPos)malloc(sizeof(Dir));
+	directory->name = (char*)malloc(MAX * sizeof(char));
+
+	if (!directory)
+		printf("Cannot alocate memory!\n");
+
+	if (curr->child != NULL) {
+		curr = curr->child;
+		while (curr->sibling != NULL) {
+			curr = curr->sibling;
+		}
+		curr->sibling = directory;
+	}
+
+	else
+		curr->child = directory;
+
+	scanf(" %s", directory->name);
+
+	directory->sibling = NULL;
+	directory->child = NULL;
+
+	return EXIT_SUCCESS;
+}
+
+int Directory(dPos curr) {
+	if (curr->child == NULL) {
+		printf("This directory is empty!\n");
+		return EXIT_SUCCESS;
+	}
+
+	curr = curr->child;
+
+	printf("Directories: \n");
+	printf("\t%s\n", curr->name);
+
+	while (curr->sibling != NULL) {
+		printf("\t%s\n", curr->sibling->name);
+		curr = curr->sibling;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+dPos FindByName(char* name, dPos curr) {
+	if (curr->child == NULL) {
+		printf("This directory is empty!");
+		return EXIT_SUCCESS;
+	}
+
+	curr = curr->child;
+
+	while (strcmp(name, curr->name) != 0 && curr->sibling != NULL) {
+		curr = curr->sibling;
+	}
+
+	if (curr->sibling == NULL) {
+		if (strcmp(name, curr->name) != 0)
+			return NULL;
+		else
+			return curr;
+	}
+
+	else
+		return curr;
+}
+
+int PushStack(sPos head, dPos directory) {
+
+	sPos q = (sPos)malloc(sizeof(Stack));
+
+	q->next = head->next;
+	q->prev = head;
+
+	if (head->next != NULL) {
+		head->next->prev = q;
+	}
+
+	head->next = q;
+	q->directory = directory;
+
+	return EXIT_SUCCESS;
+}
+
+dPos PopStack(sPos head) {
+
+	sPos q = (sPos)malloc(sizeof(Stack));
+	dPos p;
+
+	if (head->next == NULL)
+		return NULL;
+
+	q = head->next;
+	p = q->directory;
+	head->next = head->next->next;
+
+	if (head->next != NULL)
+		head->next->prev = head;
+
+	free(q);
+
+	return p;
+}
+
+dPos Back(dPos curr, sPos head)
+{
+	dPos s;
+
+	s = PopStack(head);
+
+	if (s == NULL) {
+		printf("Cannot exit the root directory!\n");
+		s = curr;
+	}
+
+	return s;
+}
+
+dPos ChangeDir(dPos curr, sPos head)
+{
+	dPos s;
+	char* name;
+	name = (char*)malloc(MAX * sizeof(char));
+
+	scanf("%s", name);
+
+	if (curr->child == NULL) {
+		printf("There's no directory that you are able to open!\n");
+		return curr;
+	}
+
+	s = FindByName(name, curr);
+
+	if (s == 0) {
+		printf("Directory not found!\n");
+		return curr;
+	}
+
+	PushStack(head, curr);
+
+	return s;
+}
