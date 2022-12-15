@@ -1,0 +1,262 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdlib.h>
+#include <stdio.h>
+#include<string.h>
+
+#define MAX 50
+
+typedef struct dir* dPok;
+typedef struct stog* sPok;
+
+typedef struct dir {
+	char* name;
+	dPok braca;
+	dPok dijete;
+}dir;
+
+typedef struct stog {
+	dPok direktorij;
+
+	sPok next;
+	sPok prev;
+} stog;
+
+int Line(sPok,dPok,dPok);
+int Menu(dPok,sPok);
+int StvoriDirektorij(dPok);
+dPok PromjeniDir(dPok,sPok);
+dPok Trazi(char *,dPok);
+int PushNaStog(sPok,dPok);
+dPok Natrag(dPok,sPok);
+dPok PopNaStog(sPok);
+int IspisDirektorija(dPok);
+sPok TraziPosljednji(sPok);
+int main()
+{
+	dPok root;
+	root = (dPok)malloc(sizeof(dir));
+	root->dijete = NULL;
+	root->braca = NULL;
+	root->name = (char*)malloc(MAX*sizeof(char));
+	root->name = "C:";
+
+	sPok head;
+	head = (sPok)malloc(sizeof(stog));
+	head->next = NULL;
+	head->prev = NULL;
+	
+	int status = 1;
+	while (status)
+	{
+		status = Menu(root,head);
+	}
+	return 0;
+}
+
+int Menu(dPok root, sPok head)
+{
+	dPok curr = root;
+	char naredba[MAX] = {0};
+	printf("md:dodaj direktorij\n");
+	printf("cd: otvori direktorij\n");
+	printf("cd..:vrati na prethodni direkotorij\n");
+	printf("dir: ispis direktorije u trenutnom direktoriju\n");
+	printf("exit: izadji\n\n");
+
+	while (1)
+	{
+		Line(head,root,curr);
+		scanf("%s",naredba);
+
+		if (!strcmp(naredba, "md"))//vraca 0 ako su jednaki
+		{
+			StvoriDirektorij(curr);
+		}
+
+		else if (!strcmp(naredba, "cd")){
+			curr = PromjeniDir(curr,head);
+		}
+
+		else if (!strcmp(naredba, "cd..")){
+			curr = Natrag(curr,head);
+		}
+
+		else if (!strcmp(naredba, "dir")){
+			IspisDirektorija(curr);
+		}
+
+		/*if (!strcmp(naredba, "exit"))
+		{
+
+		}*/
+	}
+}
+int Line(sPok head, dPok root, dPok curr)
+{
+	sPok s;
+	s = TraziPosljednji(head);
+	if (head->next == NULL)
+	{
+		printf("%s>",root->name);
+		return EXIT_SUCCESS;
+	}
+	while (s->prev != NULL)
+	{
+		printf("%s>",s->direktorij->name);
+		s = s->prev;
+	}
+	printf("%s>",curr->name);
+	return EXIT_SUCCESS;
+}
+sPok TraziPosljednji(sPok head)
+{
+	sPok s;
+	s = head->next;
+
+	if (s == NULL)
+	{
+		return NULL;
+	}
+	while (s->next != NULL)
+	{
+		s = s->next;
+	}
+	return s;
+}
+int StvoriDirektorij(dPok curr)
+{
+	dPok direktorij;
+	direktorij = (dPok)malloc(sizeof(dir));
+	direktorij->name = (char*)malloc(MAX*sizeof(char));
+
+	if (!direktorij)
+		printf("Nije moguce alocirati memoriju:\n");
+
+	if (curr->dijete != NULL)
+	{
+		curr = curr->dijete;
+		while (curr->braca != NULL) {
+			curr = curr->braca;
+		}
+		curr->braca = direktorij;
+	}
+	else {
+		curr->dijete = direktorij;
+	}
+
+	scanf(" %s", direktorij->name);
+	direktorij->braca = NULL;
+	direktorij->dijete = NULL;
+	
+	return EXIT_SUCCESS;
+
+}
+dPok PromjeniDir(dPok curr, sPok head)
+{
+	dPok s;
+	char* ime;
+	ime = (char*)malloc(MAX*sizeof(char));
+
+	scanf(" %s",ime);
+	if (curr->dijete == NULL)
+	{
+		printf("Nema takov direkotorija za ispisati:\n");
+		return curr;
+	}
+
+	s = Trazi(ime,curr);
+
+	if (s == 0)
+	{
+		printf("Direktorij nije pronadjen:\n");
+		return curr;
+	}
+	else
+		PushNaStog(head,curr);
+	return s;
+}
+dPok Trazi(char* ime, dPok curr)
+{
+	if (curr->dijete == NULL)
+	{
+		printf("direkotij je prazan\n");
+		return EXIT_FAILURE;
+
+	}
+	curr = curr->dijete;
+	while (strcmp(ime, curr->name) != 0 && curr->braca != NULL)
+	{
+		curr = curr->braca;
+	}
+	if (curr->braca == NULL)
+	{
+		if (strcmp(ime, curr->name) != 0)
+			return NULL;
+		else return curr;
+	}
+	else return curr;
+}
+int PushNaStog(sPok head, dPok direktorij)
+{
+	sPok q;
+	q = (sPok)malloc(sizeof(stog));
+	q->next = head->next;
+	q->prev = head;
+
+	if (head->next != NULL)
+	{
+		head->next->prev = q;
+	}
+	head->next = q;
+	q->direktorij = direktorij;
+
+	return EXIT_SUCCESS;
+}
+dPok Natrag(dPok curr, sPok head)
+{
+	dPok s;
+	s = PopNaStog(head);
+
+	if (s == NULL)
+	{
+		printf("Ne mozes napustiti 'C:' driekotorij\n");
+		s = curr;
+	}
+	return s;
+}
+dPok PopNaStog(sPok head)
+{
+	sPok q;
+	q = (sPok)malloc(sizeof(stog));
+	dPok p;
+
+	if (head->next == NULL)
+		return NULL;
+	q = head->next;
+	p = q->direktorij;
+	head->next = head->next->next;
+
+	if (head->next != NULL)
+		head->next->prev = head;
+	free(q);
+
+	return p;
+}
+int IspisDirektorija(dPok curr)
+{
+	if (curr->dijete == NULL)
+	{
+		printf("Direktorij je prazan:\n");
+		return EXIT_SUCCESS;
+	}
+	curr = curr->dijete;
+	printf("Direkotriji:\n");
+	printf("\t%s\n",curr->name);
+
+	while (curr->braca != NULL)
+	{
+		printf("\t%s\n",curr->braca->name);
+		curr = curr->braca;
+	}
+	return EXIT_SUCCESS;
+}
