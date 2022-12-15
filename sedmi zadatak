@@ -95,7 +95,7 @@ int StvoriDirektorij(dPok curr)
 {
 	dPok direktorij;
 	direktorij = (dPok)malloc(sizeof(dir));
-	direktorij->name = (char*)malloc(MAX*sizeof(char));
+	
 
 	if (!direktorij)
 		printf("Nije moguce alocirati memoriju:\n");
