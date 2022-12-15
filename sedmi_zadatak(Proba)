@@ -21,6 +21,7 @@ typedef struct stog {
 	sPok prev;
 } stog;
 
+int Line(sPok,dPok,dPok);
 int Menu(dPok,sPok);
 int StvoriDirektorij(dPok);
 dPok PromjeniDir(dPok,sPok);
@@ -29,6 +30,7 @@ int PushNaStog(sPok,dPok);
 dPok Natrag(dPok,sPok);
 dPok PopNaStog(sPok);
 int IspisDirektorija(dPok);
+sPok TraziPosljednji(sPok);
 int main()
 {
 	dPok root;
@@ -63,29 +65,63 @@ int Menu(dPok root, sPok head)
 
 	while (1)
 	{
+		Line(head,root,curr);
 		scanf("%s",naredba);
 
 		if (!strcmp(naredba, "md"))//vraca 0 ako su jednaki
 		{
 			StvoriDirektorij(curr);
 		}
-		if (!strcmp(naredba, "cd"));
-		{
+
+		else if (!strcmp(naredba, "cd")){
 			curr = PromjeniDir(curr,head);
 		}
-		if (!strcmp(naredba, "cd.."))
-		{
+
+		else if (!strcmp(naredba, "cd..")){
 			curr = Natrag(curr,head);
 		}
-		if (!strcmp(naredba, "dir"))
-		{
+
+		else if (!strcmp(naredba, "dir")){
 			IspisDirektorija(curr);
 		}
+
 		/*if (!strcmp(naredba, "exit"))
 		{
 
 		}*/
 	}
+}
+int Line(sPok head, dPok root, dPok curr)
+{
+	sPok s;
+	s = TraziPosljednji(head);
+	if (head->next == NULL)
+	{
+		printf("%s>",root->name);
+		return EXIT_SUCCESS;
+	}
+	while (s->prev != NULL)
+	{
+		printf("%s>",s->direktorij->name);
+		s = s->prev;
+	}
+	printf("%s>",curr->name);
+	return EXIT_SUCCESS;
+}
+sPok TraziPosljednji(sPok head)
+{
+	sPok s;
+	s = head->next;
+
+	if (s == NULL)
+	{
+		return NULL;
+	}
+	while (s->next != NULL)
+	{
+		s = s->next;
+	}
+	return s;
 }
 int StvoriDirektorij(dPok curr)
 {
@@ -94,13 +130,7 @@ int StvoriDirektorij(dPok curr)
 	direktorij->name = (char*)malloc(MAX*sizeof(char));
 
 	if (!direktorij)
-	{
 		printf("Nije moguce alocirati memoriju:\n");
-		return EXIT_FAILURE;
-	}
-	scanf(" %s", direktorij->name);
-	direktorij->braca = NULL;
-	direktorij->dijete = NULL;
 
 	if (curr->dijete != NULL)
 	{
@@ -113,6 +143,10 @@ int StvoriDirektorij(dPok curr)
 	else {
 		curr->dijete = direktorij;
 	}
+
+	scanf(" %s", direktorij->name);
+	direktorij->braca = NULL;
+	direktorij->dijete = NULL;
 	
 	return EXIT_SUCCESS;
 
