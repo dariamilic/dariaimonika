@@ -21,7 +21,6 @@ typedef struct stog {
 	sPok prev;
 } stog;
 
-int Line(sPok,dPok,dPok);
 int Menu(dPok,sPok);
 int StvoriDirektorij(dPok);
 dPok PromjeniDir(dPok,sPok);
@@ -30,7 +29,7 @@ int PushNaStog(sPok,dPok);
 dPok Natrag(dPok,sPok);
 dPok PopNaStog(sPok);
 int IspisDirektorija(dPok);
-sPok TraziPosljednji(sPok);
+
 int main()
 {
 	dPok root;
@@ -65,7 +64,6 @@ int Menu(dPok root, sPok head)
 
 	while (1)
 	{
-		Line(head,root,curr);
 		scanf("%s",naredba);
 
 		if (!strcmp(naredba, "md"))//vraca 0 ako su jednaki
@@ -85,44 +83,14 @@ int Menu(dPok root, sPok head)
 			IspisDirektorija(curr);
 		}
 
-		/*if (!strcmp(naredba, "exit"))
+		else if (!strcmp(naredba,"exit"))
 		{
-
-		}*/
+			break;
+		}
 	}
-}
-int Line(sPok head, dPok root, dPok curr)
-{
-	sPok s;
-	s = TraziPosljednji(head);
-	if (head->next == NULL)
-	{
-		printf("%s>",root->name);
-		return EXIT_SUCCESS;
-	}
-	while (s->prev != NULL)
-	{
-		printf("%s>",s->direktorij->name);
-		s = s->prev;
-	}
-	printf("%s>",curr->name);
 	return EXIT_SUCCESS;
 }
-sPok TraziPosljednji(sPok head)
-{
-	sPok s;
-	s = head->next;
 
-	if (s == NULL)
-	{
-		return NULL;
-	}
-	while (s->next != NULL)
-	{
-		s = s->next;
-	}
-	return s;
-}
 int StvoriDirektorij(dPok curr)
 {
 	dPok direktorij;
@@ -154,8 +122,7 @@ int StvoriDirektorij(dPok curr)
 dPok PromjeniDir(dPok curr, sPok head)
 {
 	dPok s;
-	char* ime;
-	ime = (char*)malloc(MAX*sizeof(char));
+	char ime[MAX];
 
 	scanf(" %s",ime);
 	if (curr->dijete == NULL)
