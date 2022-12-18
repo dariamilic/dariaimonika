@@ -1,0 +1,207 @@
+//fali level order
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 50
+#define ERROR -1
+
+
+
+struct stablo;
+typedef struct stablo* position;
+typedef struct stablo {
+    int el;
+    int desno;
+    int lijevo;
+} stablo;
+
+void Postorder(position p);
+void Preorder(position p);
+void Inorder(position p);
+position DodajElement(int novi, position p);
+position Brisi(int trazeniEl, position p);
+position Trazi(int trazeniEl, position p);
+position TraziMin(position p);
+
+
+
+int main() {
+    position root=NULL;
+    root = (position)malloc(sizeof(stablo));
+    root->desno = NULL;
+    root->lijevo = NULL;
+
+    char odabir = { 0 };
+    int i = 0;
+    int novi = 0;
+    int trazeniEl = 0;
+    position temp=NULL;
+    
+
+
+    do {
+        printf("Izaberi:\n1-dodaj novi element u stablo\n2 - Preorder ispis\n3 - Inorder ispis\n4 - Postorder ispis\n5 - Level order ispis\n6 - trazi element\n7 - obrisi element\n8 - izlaz\n");
+        scanf("%d", &odabir);
+        switch (odabir)
+        {
+        case 1:
+            printf("Upisi element koji zelis unijeti u stablo:\n");
+            scanf("%d", &novi);
+            root = DodajElement(novi, root);
+            break;
+        case 2:
+            Preorder(root);
+            break;
+        case 3:
+            Inorder(root);
+            break;
+        case 4:
+            Postorder(root);
+            break;
+        //case 5:
+            //Levelorder(root);
+            //break;
+        case 6:
+            printf("Koji element zelite pronaci?\n");
+            scanf("%d", &trazeniEl);
+            temp = Trazi(root, trazeniEl);
+            if (temp!=NULL)
+            {
+                printf("Pronasli smo element %d", temp->el);
+            }
+            break;
+        case 7:
+            printf("Koji element zelite izbrisati?\n");
+            scanf("%d", &trazeniEl);
+            root = Brisi(root, trazeniEl);
+            break;
+        default:
+            printf("Greska...\n");
+        }
+    } while (odabir != '8');
+
+    return 0;
+}
+
+position DodajElement(int novi, position p) {
+    if (p == NULL) 
+    {
+        p = (position)malloc(sizeof(stablo));
+        p->el = novi;
+        p->lijevo = NULL;
+        p->desno = NULL;
+        return p;
+    }
+    else if (novi < p->el) {
+        p->lijevo = DodajElement(novi, p->lijevo);
+    }
+    else if (novi > p->el) {
+        p->desno = DodajElement(novi, p->el);
+    }
+
+    return p;
+}
+
+void Inorder(position p) {
+    if (p == NULL)
+        return;
+    Inorder(p->lijevo);
+    printf("%d",p->el);
+    Inorder(p->desno);
+}
+
+void Preorder(position p) {
+    if (p == NULL)
+        return;
+    printf("%d",p->el);
+    Preorder(p->lijevo);
+    Preorder(p->desno);
+}
+
+void Postorder(position p) {
+    if (p == NULL)
+        return;
+    Postorder(p->lijevo);
+    Postorder(p->desno);
+    printf("%d",p->el);
+}
+
+position Trazi(int trazeniEl, position p)
+{
+    if (p == NULL)
+    {
+        return NULL;
+    }
+    else if (trazeniEl < p->el)
+    {
+        return Trazi(trazeniEl, p->lijevo);
+    }
+    else if (trazeniEl > p->el)
+    {
+        return Trazi(trazeniEl, p->desno);
+    }
+    else
+        return p;
+}
+
+position Brisi(int trazeniEl, position p)
+{
+    position temp;
+    if (p == NULL)
+    {
+        printf("Nema ga!");
+        return p;
+    }
+    else if (trazeniEl < p->el)
+    {
+        p->lijevo = Brisi(trazeniEl, p->lijevo);
+    }
+    else if (trazeniEl > p->el)
+    {
+        p->desno = Brisi(trazeniEl, p->desno);
+    }
+    else
+    {
+        if (p->lijevo != NULL && p->desno != NULL)
+        {
+            temp = TraziMin(p->desno);
+            p->el = temp->el;
+            p->desno = Brisi(p->el, p->desno);
+        }
+        else
+        {
+            temp = p;
+            if (p->lijevo == NULL)
+            {
+                p = p->desno;
+            }
+            else
+            {
+                p = p->lijevo;
+            }
+            free(temp);
+
+        }
+
+    }
+    return p;
+}
+
+position TraziMin(position p)
+{
+    if (p == NULL)
+    {
+        return NULL;
+    }
+    else if (p->lijevo = NULL)
+    {
+        return p;
+    }
+    else
+        return TraziMin(p->lijevo);
+}
+
+
+
+
