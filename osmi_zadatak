@@ -67,10 +67,10 @@ int main()
 			root = Brisi(trazeniEl,root);
 			break;
 		case 8:
-      return 0;
-      break;
+      			return 0;
+      			break;
 			
-    default:
+    		default:
 			printf("Greska...\n");
 		}
 	} while (odabir != '8');
