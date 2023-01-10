@@ -1,0 +1,176 @@
+//FALI UPIS U DATOTEKU
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+
+#define ERROR -1
+
+struct stablo;
+typedef struct stablo* position;
+typedef struct stablo
+{
+	int el;
+	position lijevo;
+	position desno;
+
+}stablo;
+
+
+position DodajEl(position x, position p);
+position StvoriNovi(int element);
+int Zamijeni(position p);
+int Rand(int min, int max);
+int Inorder(position p);
+
+int main()
+{
+
+	position temp = NULL;
+	temp = (position)malloc(sizeof(struct stablo));
+	position prvi = NULL;
+
+	int niz[] = { 2,5,7,8,11,1,4,2,3,7 };
+	int i;
+	int nizR[10] = { 0 };
+
+	for (i = 0; i < 10; i++)
+	{
+		temp = StvoriNovi(niz[i]);
+
+		if (i == 0)
+		{
+			prvi = temp;      //root
+		}
+
+		else
+		{
+			DodajEl(prvi, temp);
+		}
+	}
+
+	printf("Ispis stabla:\n");
+	Inorder(prvi);
+
+
+	Zamijeni(prvi);
+
+	printf("Ispis stabla:\n");
+	Inorder(prvi);
+
+
+	int min;
+	int max;
+	printf("Unesi raspon slucajno generiranih brojeva\n");
+
+	printf("Min: ");
+	scanf("%d", &min);
+	if (min < 10)
+	{
+		printf("Ne moze,broj treba biti veci od 10!\n");
+		scanf("%d", &min);
+	}
+
+	printf("Max: ");
+	scanf("%d", &max);
+	if (max > 90)
+	{
+		printf("Ne može,broj treba biti manji od 90!\n");
+		scanf("%d", &max);
+	}
+
+	//Niz za rand
+	srand(time(NULL));
+	for (i = 0; i < 10; i++)
+	{
+		nizR[i] = Rand(min, max);
+	}
+
+
+	for (i = 0; i < 10; i++)
+	{
+		temp = StvoriNovi(nizR[i]);
+		if (i == 0)
+		{
+			prvi = temp;
+		}
+		else
+		{
+			DodajEl(prvi, temp);
+		}
+	}
+
+	printf("Ispis stabla:\n");
+	Inorder(prvi);
+
+	return EXIT_SUCCESS;
+
+}
+
+int Rand(int min, int max)
+{
+	int r = (rand() % (max - min + 1)) + min;
+	return r;
+}
+
+
+position StvoriNovi(int element)
+{
+	position novi = NULL;
+	novi = (position)malloc(sizeof(struct stablo));
+	if (!novi)
+	{
+		printf("Nije alociran");
+		return ERROR;
+	}
+	novi->el = element;
+	novi->lijevo = NULL;
+	novi->desno = NULL;
+	return novi;
+}
+
+position DodajEl(position p, position x)
+{
+	if (p == NULL)
+	{
+		return x;
+	}
+
+	if (p->el <= x->el)
+	{
+		p->desno = DodajEl(p->desno, x);
+	}
+
+	else if (p->el > x->el)
+	{
+		p->lijevo = DodajEl(p->lijevo, x);
+	}
+
+	return p;
+}
+
+int Zamijeni(position p)
+{
+	int x = 0;
+	int rez = 0;
+	if (p == 0)
+		return 0;
+	x = p->el;
+	p->el = Zamijeni(p->lijevo) + Zamijeni(p->desno);
+	rez = p->el + x;
+	return rez;
+
+}
+
+int Inorder(position p)
+{
+	if (p != NULL)
+	{
+		Inorder(p->lijevo);
+		printf("%d\n", p->el);
+		Inorder(p->desno);
+	}
+	return EXIT_SUCCESS;
+
+}
