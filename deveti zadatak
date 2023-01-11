@@ -23,6 +23,9 @@ position StvoriNovi(int element);
 int Zamijeni(position p);
 int Rand(int min, int max);
 int Inorder(position p);
+int upisUDatoteku(char *,position);
+int inorderZaDat(FILE*,position);
+
 
 int main()
 {
@@ -34,6 +37,7 @@ int main()
 	int niz[] = { 2,5,7,8,11,1,4,2,3,7 };
 	int i;
 	int nizR[10] = { 0 };
+	char nameFile[MAX_NAME] = "stablo.txt";
 
 	for (i = 0; i < 10; i++)
 	{
@@ -52,13 +56,15 @@ int main()
 
 	printf("Ispis stabla:\n");
 	Inorder(prvi);
-
+	
+	upisUDatoteku(nameFile,prvi);
 
 	Zamijeni(prvi);
 
 	printf("Ispis stabla:\n");
 	Inorder(prvi);
-
+	
+	upisUDatoteku(nameFile,prvi);
 
 	int min;
 	int max;
@@ -173,4 +179,35 @@ int Inorder(position p)
 	}
 	return EXIT_SUCCESS;
 
+}
+int upisUDatoteku(char* imeDat, position root)
+{
+	char z;
+	z = '\n';
+	
+	FILE* fp = NULL;
+	fp = fopen(imeDat,"a");
+	if (!fp)
+	{
+		printf("Greska pri otvaranju dat");
+		return EXIT_FAILURE;
+	}
+
+	inorderZaDat(fp,root);
+	fprintf(fp,"%c",z );
+	
+	fclose(fp);
+
+	return EXIT_SUCCESS;
+}
+int inorderZaDat(FILE* fp, position root)
+{
+	if (root)
+	{
+		inorderZaDat(fp, root->lijevo);
+		fprintf(fp,"%d ",root->el);
+		inorderZaDat(fp,root->desno);
+
+	}
+	return EXIT_SUCCESS;
 }
