@@ -1,0 +1,85 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define MAX 40
+
+struct lista;
+typedef struct lista* pozicija_l;
+typedef struct lista {
+	char drzava[MAX];
+	pozicija_l next;
+	pozicija_l prev;
+
+}lista;
+
+struct stablo;
+typedef struct stablo* pozicija_s;
+typedef struct stablo {
+	char grad[MAX];
+	int broj_stanovnika;
+	pozicija_s lijevo;
+	pozicija_s desno;
+}stablo;
+
+
+int otvoriDat(char*);
+//int stvoriStablo(char, int );
+
+int main()
+{
+	char ime_dat[MAX];
+	int broj_drzava=1;
+	char *buffer;
+	char *buffer_dat;
+
+	printf("Unesite ime datoteke iz koje zelite procitati drzave:\n");
+	scanf("%s",ime_dat);
+
+
+	FILE* fp = NULL;
+	fp = fopen(ime_dat,"r");
+	if (fp == NULL)
+	{
+		printf("Datoteka nije otvorena\n");
+		return EXIT_FAILURE;
+	}
+	
+	while (!feof(fp))
+	{
+
+		fscanf(fp, " %s %s", buffer, buffer_dat);
+		otvoriDat(buffer_dat);
+
+	}
+	
+	fclose(fp);
+	return EXIT_SUCCESS;
+}
+int otvoriDat(char *drzava)
+{
+	char ime_grada[MAX];
+	int broj_stanovnika;
+
+	FILE* fp;
+	fp = fopen(drzava,"r");
+	if (fp == NULL)
+	{
+		printf("Datoteka nije otvorena");
+		return EXIT_FAILURE;
+	}
+
+	while (!feof(fp))
+	{
+
+		fscanf(fp, " %s %s",ime_grada,&broj_stanovnika);
+		//stvoriStablo(ime_grada,broj_stanovnika);
+
+	}
+
+	printf("usli smo u drugu dat");
+
+	fclose(fp);
+	return EXIT_SUCCESS;
+}
