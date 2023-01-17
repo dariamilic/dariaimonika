@@ -33,6 +33,11 @@ int main()
     posD head = NULL;
     head = (posD)malloc(sizeof(struct drzava));
     head->next = NULL;
+     if (head == NULL)
+    {
+        printf("Greska pri alokaciji\n");
+        return EXIT_FAILURE;
+    }
 
     char ime_dat[MAX];
     char imeDrzave[MAX];
