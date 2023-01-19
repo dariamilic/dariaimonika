@@ -186,7 +186,7 @@ int IspisDrzava(posD p)
 
     while (p != NULL)
     {
-        printf("%s\n", p->ime_drzave);
+        printf("\n%s\n", p->ime_drzave);
         IspisGrada(p->Grad);
         p = p->next;
     }
