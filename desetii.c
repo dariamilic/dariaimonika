@@ -27,6 +27,8 @@ int DodajGrad(char* imeDat, posG s);
 posG NoviGrad(char* imeGrada, int stanovnici, posG s);
 int IspisDrzava(posD p);
 int IspisGrada(posG s);
+int BrisiDrzave(posD p);
+int BrisiGrad(posG q);
 
 int main()
 {   
@@ -64,6 +66,8 @@ int main()
     fclose(fp);
 
     IspisDrzava(head->next);
+    
+    BrisiDrzave(head->next);
 
     return EXIT_SUCCESS;
 }
@@ -198,5 +202,27 @@ int IspisGrada(posG s)
         IspisGrada(s->D);
     }
     return EXIT_SUCCESS;;
+}
+int BrisiDrzave(posD p)
+{
+    posD temp = NULL;
+    while (p->next != NULL)
+    {
+        temp = p->next;
+        p->next = temp->next;
+        BrisiGrad(temp->Grad);
+        free(temp);
+    }
+    return EXIT_SUCCESS;
+}
+int BrisiGrad(posG q)
+{
+    if (q != NULL)
+    {
+        BrisiGrad(q->L);
+        BrisiGrad(q->D);
+        free(q);
+    }
+    return EXIT_SUCCESS;
 }
 
